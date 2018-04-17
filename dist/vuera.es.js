@@ -340,20 +340,23 @@ var ReactWrapper = {
     mountReactComponent: function mountReactComponent(component) {
       var _this2 = this;
 
+      var tempEl = document.createElement('div');
       var Component = makeReactContainer(component);
       var children = this.$slots.default !== undefined ? { children: this.$slots.default } : {};
       ReactDOM.render(React.createElement(Component, _extends({}, this.$props.passedProps, this.$attrs, this.$listeners, children, {
         ref: function ref(_ref) {
           return _this2.reactComponentRef = _ref;
         }
-      })), this.$refs.react);
+      })), tempEl, function () {
+        _this2.$el.parentNode.replaceChild(tempEl.firstChild, _this2.$el);
+      });
     }
   },
   mounted: function mounted() {
     this.mountReactComponent(this.$props.component);
   },
   beforeDestroy: function beforeDestroy() {
-    ReactDOM.unmountComponentAtNode(this.$refs.react);
+    ReactDOM.unmountComponentAtNode(this.$el.parentNode);
   },
   updated: function updated() {
     /**

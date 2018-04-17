@@ -35,9 +35,7 @@ const makeReactContainer = Component => {
       const wrappedChildren = this.wrapVueChildren(children)
 
       return (
-        <Component {...rest}>
-          {children && <VueWrapper component={wrappedChildren} />}
-        </Component>
+        <Component {...rest}>{children && <VueWrapper component={wrappedChildren} />}</Component>
       )
     }
   }
@@ -50,6 +48,7 @@ export default {
   },
   methods: {
     mountReactComponent (component) {
+      const tempEl = document.createElement('div')
       const Component = makeReactContainer(component)
       const children = this.$slots.default !== undefined ? { children: this.$slots.default } : {}
       ReactDOM.render(
@@ -60,7 +59,10 @@ export default {
           {...children}
           ref={ref => (this.reactComponentRef = ref)}
         />,
-        this.$refs.react
+        tempEl,
+        () => {
+          this.$el.parentNode.replaceChild(tempEl.firstChild, this.$el)
+        }
       )
     },
   },
@@ -68,7 +70,7 @@ export default {
     this.mountReactComponent(this.$props.component)
   },
   beforeDestroy () {
-    ReactDOM.unmountComponentAtNode(this.$refs.react)
+    ReactDOM.unmountComponentAtNode(this.$el.parentNode)
   },
   updated () {
     /**

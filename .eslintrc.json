@@ -11,6 +11,7 @@
   },
   "plugins": ["vue"],
   "globals": {
-    "Symbol": true
+    "Symbol": true,
+    "document": true
   }
 }
